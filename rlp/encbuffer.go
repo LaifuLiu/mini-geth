@@ -1,6 +1,7 @@
 package rlp
 
 import (
+	"fmt"
 	"io"
 	"reflect"
 	"sync"
@@ -9,25 +10,25 @@ import (
 // set a globe sync.pool
 // write different write funcs
 
-type EncBuff struct {
+type EncBuffer struct {
 	str []byte
 }
 
 var encBuffPool = sync.Pool{
-	New: func() interface{} { return &EncBuff{str: make([]byte, 1024)} },
+	New: func() interface{} { return &EncBuffer{str: make([]byte, 1024)} },
 }
 
-func getEncBuffer() *EncBuff {
-	buf := encBuffPool.Get().(*EncBuff)
+func getEncBufferer() *EncBuffer {
+	buf := encBuffPool.Get().(*EncBuffer)
 	buf.reset()
 	return buf
 }
 
-func (buf *EncBuff) reset() {
+func (buf *EncBuffer) reset() {
 	buf.str = buf.str[:0]
 }
 
-func (buf *EncBuff) encode(val interface{}) error {
+func (buf *EncBuffer) encode(val interface{}) error {
 	rval := reflect.ValueOf(val)
 
 	writer, err := makeWriter(rval.Type())
@@ -40,11 +41,16 @@ func (buf *EncBuff) encode(val interface{}) error {
 	return nil
 }
 
-func (buf *EncBuff) writeTo(w io.Writer) error {
+func (buf *EncBuffer) writeTo(w io.Writer) error {
 	_, err := w.Write(buf.str)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (buf *EncBuffer) writeUint64(w io.Writer) error {
+	fmt.Println("int64")
 	return nil
 }

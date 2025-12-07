@@ -1,15 +1,19 @@
 package types
 
-import "io"
+import (
+	"io"
+
+	"github.com/LaifuLiu/mini-geth/rlp"
+)
 
 type Header struct {
-	parentHash  string
-	txHash      string
-	receiptHash string
-	number      uint64
-	gasLimit    uint64
-	gasUsed     uint64
-	baseFee     uint64
+	parentHash string
+	// txhash      string
+	// receipthash string
+	// number      uint64
+	// gaslimit    uint64
+	// gasused     uint64
+	basefee uint64
 }
 
 type Block struct {
@@ -20,6 +24,13 @@ type Block struct {
 type ExtBlock struct {
 	header *Header
 	txs    []*Transaction
+}
+
+func NewBlock(header *Header, txs []*Transaction) *Block {
+	return &Block{
+		header: header,
+		txs:    txs,
+	}
 }
 
 func (b *Block) EncodeRlp(w io.Writer) error {
